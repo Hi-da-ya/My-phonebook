@@ -130,6 +130,43 @@ class Contact:
         contact.save()
         return contact 
 
+    #method that retrieves data from the database
+    @classmethod
+    def from_db(cls, row):
+        #Returns Contact object having the attribute values from the table row.
+        # Check the dictionary for  existing instance using the row's primary key
+        contact = cls.all.get(row[0])
+        if contact:
+            # ensure attributes match row values in case local instance was modified
+            contact.name = row[1]
+            contact.phone_no= row[2]
+            contact.label_id = row[3]
+        else:
+            # not in dictionary, create new instance and add to dictionary
+            contact = cls(row[1], row[2], row[3])
+            contact.id = row[0]
+            cls.all[contact.id] = contact
+        return contact
     
+    #method that retrieves all contacts and displays them as a list
+    @classmethod
+    def view_all(cls):
+        sql = """
+            SELECT * FROM contacts
+        """
+
+        rows = cursor.execute(sql).fetchall()
+
+        return [cls.from_db(row) for row in rows]
+    
+    #method that searches for a contact by name
+    @classmethod
+    def search_by_name(cls, name):
+        sql = """
+            SELECT * FROM contacts WHERE name is ?
+        """
+
+        row = cursor.execute(sql, (name,)).fetchone()
+        return cls.from_db(row) if row else None
 
 Contact.create_table()
