@@ -1,5 +1,6 @@
-from __init__ import cursor, conn
-from label import Label
+from . import cursor, conn
+from .label import Label
+import re
 
 class Contact:
     all = {}
@@ -29,30 +30,34 @@ class Contact:
                 "Name must be a non-empty string"
             )
 
+    
     @property
     def phone_no(self):
         return self._phone_no
 
     @phone_no.setter
     def phone_no(self, phone_no):
-        if isinstance(phone_no, int) and len(phone_no):
+        if self.validate_number(phone_no):
             self._phone_no = phone_no
         else:
-            raise ValueError(
-                "phone_no must be an integer"
-            )
+            raise ValueError("Invalid phone number format")
+
+    def validate_number(self, phone_no):
+        pattern = r'^\+?\d{1,3}\d{9}$'
+        return re.match(pattern, str(phone_no)) is not None        
 
     @property
     def label_id(self):
         return self._label_id
 
-    @label_id.setter
     def label_id(self, label_id):
-        if type(label_id) is int and Label.find_by_id(label_id):
+        if label_id is None:
+            # Optionally, you can set a default label_id here
+            self._label_id = None
+        elif isinstance(label_id, int) and label_id in Label.search_by_id(label_id):
             self._label_id = label_id
         else:
-            raise ValueError(
-                "label_id must reference a Label in the database")
+            raise ValueError("label_id must reference a Label in the database or be None")
 
     #method to create contacts table
     @classmethod
@@ -62,7 +67,7 @@ class Contact:
             CREATE TABLE IF NOT EXISTS contacts (
             id INTEGER PRIMARY KEY,
             name TEXT,
-            phone_no INTEGER,
+            phone_no TEXT,
             label_id INTEGER,
             FOREIGN KEY (label_id) REFERENCES labels(id))
         """
@@ -163,10 +168,20 @@ class Contact:
     @classmethod
     def search_by_name(cls, name):
         sql = """
-            SELECT * FROM contacts WHERE name is ?
+            SELECT * FROM contacts WHERE name = ?
         """
 
         row = cursor.execute(sql, (name,)).fetchone()
         return cls.from_db(row) if row else None
+    
+    @classmethod
+    def search_by_id(cls, id):
+        sql = """
+            SELECT * FROM contacts WHERE id = ?
+        """
+
+        row = cursor.execute(sql, (id,)).fetchone()
+        return cls.from_db(row) if row else None
+
 
 Contact.create_table()

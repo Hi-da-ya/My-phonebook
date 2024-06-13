@@ -1,4 +1,4 @@
-from __init__ import cursor, conn
+from . import cursor, conn
 
 class Label:
     all = {}
@@ -57,7 +57,7 @@ class Label:
             VALUES (?)
         """
 
-        cursor.execute(sql, (self.name))
+        cursor.execute(sql, (self.name,))
 
         conn.commit()
 
@@ -138,10 +138,21 @@ class Label:
         row = cursor.execute(sql, (name,)).fetchone()
         return cls.from_db(row) if row else None
     
+    def search_by_id(cls, id):
+        """Return a Label object corresponding to the table row matching the specified primary key"""
+        sql = """
+            SELECT *
+            FROM labels
+            WHERE id = ?
+        """
+
+        row = cursor.execute(sql, (id,)).fetchone()
+        return cls.from_db(row) if row else None
+    
     #method that returns a list of assosciated contacts
     def contacts(self):
         """Return list of contacts associated with current label"""
-        from contact import Contact
+        from .contact import Contact
         sql = """
             SELECT * FROM contacts
             WHERE label_id = ?
