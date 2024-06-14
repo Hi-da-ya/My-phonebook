@@ -98,3 +98,7 @@ def delete_label():
         print(f'label {id_} deleted')
     else:
         print(f'label {id_} not found')
+
+def exit_program():
+    print("Exiting program.....")
+    exit()        

@@ -13,8 +13,8 @@ class Contact:
 
     def __repr__(self):
         return (
-            f"<contact{self.id}: {self.name}, {self.phone_no}, " +
-            f"label ID: {self.label_id}>"
+            f"contact{self.id}: {self.name}, {self.phone_no}, " +
+            f"label ID: {self.label_id}"
         )
 
     @property
@@ -168,11 +168,12 @@ class Contact:
     @classmethod
     def search_by_name(cls, name):
         sql = """
-            SELECT * FROM contacts WHERE name = ?
+            SELECT * FROM contacts WHERE name LIKE ?
         """
 
-        row = cursor.execute(sql, (name,)).fetchone()
-        return cls.from_db(row) if row else None
+        name_pattern = f"%{name}%"
+        rows = cursor.execute(sql, (name_pattern,)).fetchall()
+        return [cls.from_db(row) for row in rows] 
     
     @classmethod
     def search_by_id(cls, id):

@@ -8,6 +8,7 @@ from functionality import (
     list_label_contacts,
     list_label,
     create_label,
+    exit_program,
     delete_label,
     update_label
 )
@@ -30,7 +31,9 @@ def main():
         elif choice == "7":
             list_label()
         elif choice == "8":
-            create_label()        
+            create_label()
+        elif choice == "00":
+            exit_program()            
         else:
             print("Invalid choice!!!")
 
@@ -46,6 +49,7 @@ def options():
     print("6. View list of contacts in a label")
     print("7. View all labels")
     print("8. Create new label")
+    print("00. Exit")
 
                               
                 

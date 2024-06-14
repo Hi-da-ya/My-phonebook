@@ -8,7 +8,7 @@ class Label:
         self.name = name
 
     def __repr__(self):
-        return f"<label {self.id}: {self.name}>"
+        return f"label {self.id}: {self.name}"
 
     @property
     def name(self):
