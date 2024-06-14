@@ -1,4 +1,4 @@
-#lib/cli.py
+#!/usr/bin/env python3
 from functionality import (
     list_contacts,
     create_contact,
@@ -39,7 +39,7 @@ def main():
 
 
 def options():
-    print("=====My Phone book=====")
+    print("===== My Phone book =====")
     print("Please select an option: ")
     print("1. View all contacts")
     print("2. Create new contact")

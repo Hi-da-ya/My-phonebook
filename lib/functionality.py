@@ -44,9 +44,13 @@ def find_contact_by_name():
         f'contact {name} not found') 
 
 def list_contacts():
+    print("====== My contacts =====")
     contacts = Contact.view_all()
-    for contact in contacts:
-        print(contact)
+    if not contacts:
+        print("Phonebook is empty, please create a new contact")
+    else:    
+        for contact in contacts:
+            print(contact)
 
 def list_label_contacts():
     name = input("Enter the label's name: ")
@@ -57,6 +61,7 @@ def list_label_contacts():
         print(f'label {name} not found')
 
 def list_label():
+    print("===== Labels =====")
     label = Label.view_all()
     for label in label:
         print(label)
